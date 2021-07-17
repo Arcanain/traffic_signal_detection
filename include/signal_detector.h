@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <std_msgs/Int8.h>
 #include <opencv2/opencv.hpp>
 //#include <opencv2/core/core.hpp>
 //#include <opencv2/core/eigen.hpp>
@@ -223,23 +224,3 @@ int SignalDetector::check_signal_state(cv::Mat frame)
 
     return state;
 }
-
-/*
-int main(int argc, char**argv)
-{
-	ros::init(argc, argv, "signal_publisher");
-	
-	SignalDetector signaldetector;
-
-    
-	ros::Rate loop_rate(10);
-	while(ros::ok()){
-		//ros_with_class.Publication();
-		ros::spinOnce();
-		loop_rate.sleep();
-	}
-
-
-	return 0;
-}
-*/

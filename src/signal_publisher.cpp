@@ -34,7 +34,7 @@ SignalDetecorNode::~SignalDetecorNode()
 
 void SignalDetecorNode::callback(const sensor_msgs::Image &data)
 {
-	int state;
+	std_msgs::Int8 state;
 	cv_bridge::CvImagePtr cv_image;
     
 	try {
@@ -42,11 +42,11 @@ void SignalDetecorNode::callback(const sensor_msgs::Image &data)
     } catch (cv_bridge::Exception& ex) {
         ROS_ERROR("error");
         exit(-1);
-    }
+	}
 
 	// cv_image->imageがcv::Matフォーマット
-	//state = check_signal_state(cv_image->image);
-	//signal_pub.publish(state);
+	state.data = check_signal_state(cv_image->image);
+	signal_pub.publish(state);
 }
 
 int main(int argc, char**argv)
