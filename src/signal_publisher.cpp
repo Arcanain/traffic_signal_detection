@@ -56,14 +56,11 @@ int main(int argc, char**argv)
 	//SignalDetector signaldetector;
 	SignalDetecorNode signaldetecornode;
 
-	/*
 	ros::Rate loop_rate(10);
 	while(ros::ok()){
-		//ros_with_class.Publication();
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-	*/
-
-	//return 0;
+	
+	return 0;
 }
