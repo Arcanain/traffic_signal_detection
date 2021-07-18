@@ -163,13 +163,13 @@ cv::Mat SignalDetector::diffimg(cv::Mat after, cv::Mat before) {
 	output.push_back( green_final );
 	output.push_back( red_final );
     cv::merge(output, dst);
-    cv::imwrite("fuga.png", dst);
     */
     
     /***********************************************************************
      * パターン2
      * reference : https://koshinran.hateblo.jp/entry/2018/03/11/231901
      **********************************************************************/
+    /*
     std::vector<cv::Mat> rgb_after;
     cv::split(after, rgb_after);
 
@@ -186,9 +186,33 @@ cv::Mat SignalDetector::diffimg(cv::Mat after, cv::Mat before) {
 	output.push_back( green_diff );
 	output.push_back( red_diff );
     cv::merge(output, dst);
-    //cv::imwrite("fuga2.png", dst);
+    */
 
-    return dst;
+    /***********************************************************************
+     * パターン3
+     * reference1 : https://code-database.com/knowledges/116
+     * reference2 : https://shimikel.hatenablog.com/entry/2015/07/25/190139
+     **********************************************************************/
+    
+    cv::Mat diff;
+    cv::absdiff(after, before, diff);
+    std::vector<cv::Mat> rgb;
+    cv::split(diff, rgb);
+
+    vector<cv::Mat> output;
+    cv::Mat dst;
+    //cv::Mat dst = cv::Mat(after.cols, after.rows, CV_8U);
+    output.push_back( rgb[0] );
+	output.push_back( rgb[1] );
+	output.push_back( rgb[2] );
+    cv::merge(output, dst);
+
+    cv::Mat temp;
+    dst.convertTo(temp, CV_8U);
+
+    return temp;
+
+    //return dst;
     // return (output/2.0).astype(np.uint8);
 }
 
