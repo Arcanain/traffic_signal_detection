@@ -96,6 +96,7 @@ SignalDetector::SignalDetector()
     temp1 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
     temp2 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/black2green.png");
     temp3 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/green2red.png");
+    
     if (temp0.empty() && temp1.empty() && temp2.empty() && temp3.empty()) {
         ROS_ERROR("map: unable to open the map");
     }
@@ -106,7 +107,6 @@ SignalDetector::SignalDetector()
     temp3_w = temp3.rows;
 
     ok_desu = 0;
-    //output = cv::image(600, 600, CV_LOAD_IMAGE_COLOR);
 
     green_cnt = 0;
     red_cnt = 0;

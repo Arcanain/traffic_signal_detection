@@ -47,24 +47,16 @@ void SignalDetecorNode::callback(const sensor_msgs::Image &data)
 	// cv_image->imageがcv::Matフォーマット
 	state.data = check_signal_state(cv_image->image);
 	signal_pub.publish(state);
+    ROS_INFO("%d is published", state);
 }
 
 int main(int argc, char**argv)
 {
 	ros::init(argc, argv, "signal_publisher");
 	
-	//SignalDetector signaldetector;
 	SignalDetecorNode signaldetecornode;
-    
-    /*
-	// https://hmatsudaiac.wixsite.com/venus-robotix/cv-color-extraction-c
-	hsv_threshold threshold_blue  = {90,  110, 180, 30};
-    hsv_threshold threshold_green = {50,  80,  50,  130};
-    hsv_threshold threshold_red   = {175, 5,   240, 110};
-    */
 
     std::string homepath = std::getenv("HOME");
-    //cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
     cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/歩行者信号機.jpg");
     if (image.empty()) {
         ROS_ERROR("map: unable to open the map");
@@ -107,10 +99,6 @@ int main(int argc, char**argv)
     cv::merge(output2, test2);
     cv::imwrite("fuga2.png", test2);
 
-    //cout << binary_blue_before << endl;
-    //cout << binary_green_before << endl;
-    //cout << binary_red_before << endl;
-
     // 3つのチャネルB, G, Rに分離 (OpenCVではデフォルトでB, G, Rの順)
     // planes[0],planes[1],planes[2]に B・G・R が格納
     // https://minus9d.hatenablog.com/entry/20130204/1359989829
@@ -123,8 +111,6 @@ int main(int argc, char**argv)
 	output.push_back( red_final );
     cv::merge(output, test);
     cv::imwrite("fuga.png", test);
-
-    //cout << image.depth() << endl;
 
 	ros::Rate loop_rate(10);
 	while(ros::ok()){
