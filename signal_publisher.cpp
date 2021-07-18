@@ -100,12 +100,23 @@ int main(int argc, char**argv)
     hsv_threshold threshold_green = {50,  80,  50,  130};
     hsv_threshold threshold_red   = {175, 5,   240, 110};
 
+	//cv::Mat image = cv::imread("templates/red2green.png");
+	//cv::Mat image = cv::imread("templates/歩行者信号機.jpg");
+	//cv::Mat image = cv::imread("歩行者信号機.jpg", 1);
+	//cv::Mat image = cv::imread("~/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
     std::string homepath = std::getenv("HOME");
-    cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
+    cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png", 0);
     if (image.empty()) {
         ROS_ERROR("map: unable to open the map");
     }
-	
+
+    /*
+	if (image.empty()) {
+		cout << "入力画像が見つかりません" << endl;
+		return -1;
+	}
+	*/
+
     /*
 	cv::Mat binary_blue, binary_green, binary_red;
 	binary_blue  = extract_color(image, threshold_blue);

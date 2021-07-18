@@ -11,7 +11,7 @@ find_package(catkin REQUIRED
 
 #find_package(OpenCV REQUIRED)
 
-find_package(OpenCV REQUIRED COMPONENTS
+find_package(OpenCV REQUIRED
   opencv_core
   opencv_imgproc
   opencv_imgcodecs
@@ -28,9 +28,16 @@ catkin_package(
 )
 
 include_directories(
-  include
+  include 
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
+
+#include_directories(
+#  include
+#  ${catkin_INCLUDE_DIRS}
+#  ${OpenCV_INCLUDE_DIRS}
+#)
 
 #add_executable(signal_publisher_node src/signal_publisher.cpp include/signal_detector.h)
 #add_dependencies(signal_publisher_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -43,13 +50,10 @@ include_directories(
 
 #add_executable(traffic_signal_detection src/test.cpp)
 add_executable(signal_publisher src/signal_publisher.cpp)
+#add_executable(signal_publisher signal_publisher.cpp)
 target_link_libraries(signal_publisher
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
-)
-include_directories(include 
-  ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
 )
 
 #install(DIRECTORY include

@@ -1,9 +1,10 @@
 #include <ros/ros.h>
 #include <std_msgs/Int8.h>
 #include <opencv2/opencv.hpp>
-//#include <opencv2/core/core.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 //#include <opencv2/core/eigen.hpp>
-//#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 using namespace std;
 using namespace cv;
@@ -64,25 +65,20 @@ public:
 
 SignalDetector::SignalDetector()
 {
-    cout << "signal detection start!" << endl;
-
     // load template images
-    temp0 = cv::imread("templates/red2green.png");
-    temp1 = cv::imread("templates/red2black.png");
-    temp2 = cv::imread("templates/black2green.png");
-    temp3 = cv::imread("templates/green2red.png");
+    std::string homepath = std::getenv("HOME");
+    temp0 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2green.png");
+    temp1 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
+    temp2 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/black2green.png");
+    temp3 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/green2red.png");
+    if (temp0.empty() && temp1.empty() && temp2.empty() && temp3.empty()) {
+        ROS_ERROR("map: unable to open the map");
+    }
     
     temp0_h = temp0.cols;
     temp0_w = temp0.rows;
     temp3_h = temp3.cols;
     temp3_w = temp3.rows;
-
-    /*
-    frame4 = 0;
-    frame3 = 0;
-    frame2 = 0;
-    frame1 = 0;
-    */
 
     ok_desu = 0;
     //output = cv::image(600, 600, CV_LOAD_IMAGE_COLOR);
@@ -99,6 +95,8 @@ SignalDetector::SignalDetector()
 
     // signal states (0:unkown, 1:green, 2:red)
     state = 0;
+
+    cout << "signal detection start!" << endl;
 }
 
 SignalDetector::~SignalDetector()
@@ -117,6 +115,17 @@ cv::Mat SignalDetector::diffimg(cv::Mat after, cv::Mat before) {
     blue_after  = after[:,:,0];
     green_after = after[:,:,1];
     red_after   = after[:,:,2];
+
+    blue_final  = blue_after.astype(np.int32) - blue_before.astype(np.int32) + 255
+    green_final = green_after.astype(np.int32)- green_before.astype(np.int32) + 255
+    red_final   = red_after.astype(np.int32) - red_before.astype(np.int32) + 255
+
+    output=np.zeros((after.shape[0],after.shape[1],3))
+    output[:,:,0]=blue_final
+    output[:,:,1]=green_final
+    output[:,:,2]=red_final
+
+    return (output/2.0).astype(np.uint8)
     */
 }
 
@@ -147,7 +156,7 @@ int SignalDetector::check_signal_state(cv::Mat frame)
 {
     new_frame = frame;
     display_frame = new_frame.clone();
-    
+
     if (ok_desu > 4) {
         output = diffimg(new_frame, frame4);
 
