@@ -56,6 +56,7 @@ int main(int argc, char**argv)
 	
 	SignalDetecorNode signaldetecornode;
 
+    /*
     std::string homepath = std::getenv("HOME");
     cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/歩行者信号機.jpg");
     if (image.empty()) {
@@ -111,12 +112,17 @@ int main(int argc, char**argv)
 	output.push_back( red_final );
     cv::merge(output, test);
     cv::imwrite("fuga.png", test);
+    */
 
+    /*
 	ros::Rate loop_rate(10);
 	while(ros::ok()){
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-	
+	*/
+
+    ros::spin();
+
 	return 0;
 }
