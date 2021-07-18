@@ -49,6 +49,7 @@ void SignalDetecorNode::callback(const sensor_msgs::Image &data)
 	signal_pub.publish(state);
 }
 
+/*
 struct hsv_threshold
 {
     unsigned char hue_lower;
@@ -87,7 +88,7 @@ cv::Mat extract_color(cv::Mat image, hsv_threshold threshold)
 
     return binary;
 }
-
+*/
 int main(int argc, char**argv)
 {
 	ros::init(argc, argv, "signal_publisher");
@@ -95,27 +96,56 @@ int main(int argc, char**argv)
 	//SignalDetector signaldetector;
 	SignalDetecorNode signaldetecornode;
     
+    /*
 	// https://hmatsudaiac.wixsite.com/venus-robotix/cv-color-extraction-c
 	hsv_threshold threshold_blue  = {90,  110, 180, 30};
     hsv_threshold threshold_green = {50,  80,  50,  130};
     hsv_threshold threshold_red   = {175, 5,   240, 110};
+    */
 
     std::string homepath = std::getenv("HOME");
-    cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
+    //cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
+    cv::Mat image = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/歩行者信号機.jpg");
     if (image.empty()) {
         ROS_ERROR("map: unable to open the map");
     }
 	
-    /*
-	cv::Mat binary_blue, binary_green, binary_red;
-	binary_blue  = extract_color(image, threshold_blue);
-    binary_green = extract_color(image, threshold_green);
-    binary_red   = extract_color(image, threshold_red);     
-	*/
-	cout << image.channels() << image.dims << image.elemSize1() << endl;
-	cout << image.cols << image.rows << endl;
+    hsv_threshold threshold_blue  = {90,  110, 180, 30};
+    hsv_threshold threshold_green = {50,  80,  50,  130};
+    hsv_threshold threshold_red   = {175, 5,   240, 110};
 
-	//cout << binary_blue << endl;
+    // before
+	cv::Mat binary_blue_before  = signaldetecornode.extract_color(image, threshold_blue);
+    cv::Mat binary_green_before = signaldetecornode.extract_color(image, threshold_green);
+    cv::Mat binary_red_before   = signaldetecornode.extract_color(image, threshold_red);   
+    
+    // after
+    cv::Mat binary_blue_after  = signaldetecornode.extract_color(image, threshold_blue);
+    cv::Mat binary_green_after = signaldetecornode.extract_color(image, threshold_green);
+    cv::Mat binary_red_after   = signaldetecornode.extract_color(image, threshold_red);  
+    
+    cv::Mat blue_final  = binary_blue_after - binary_blue_before + 255;
+    cv::Mat green_final = binary_green_after- binary_green_before + 255;
+    cv::Mat red_final   = binary_red_after - binary_red_before + 255;
+
+    //cout << binary_blue_before << endl;
+    //cout << binary_green_before << endl;
+    //cout << binary_red_before << endl;
+
+    // 3つのチャネルB, G, Rに分離 (OpenCVではデフォルトでB, G, Rの順)
+    // planes[0],planes[1],planes[2]に B・G・R が格納
+    // https://minus9d.hatenablog.com/entry/20130204/1359989829
+    // https://koshinran.hateblo.jp/entry/2018/03/11/231901    
+    // 統合
+    vector<cv::Mat> output;
+    cv::Mat test;
+    output.push_back( blue_final );
+	output.push_back( green_final );
+	output.push_back( red_final );
+    cv::merge(output, test);
+    cv::imwrite("fuga.png", test);
+
+    //cout << image.depth() << endl;
 
 	ros::Rate loop_rate(10);
 	while(ros::ok()){
