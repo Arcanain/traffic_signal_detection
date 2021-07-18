@@ -129,10 +129,14 @@ SignalDetector::~SignalDetector()
     cout << "signal detection finish! Bye!" << endl;
 }
 
-
 // generating diff image
 cv::Mat SignalDetector::diffimg(cv::Mat after, cv::Mat before) {
-    // https://hmatsudaiac.wixsite.com/venus-robotix/cv-color-extraction-c
+
+    /***********************************************************************
+     * パターン1
+     * reference : https://hmatsudaiac.wixsite.com/venus-robotix/cv-color-extraction-c
+     **********************************************************************/
+    /*
 	threshold_blue  = {90,  110, 180, 30};
     threshold_green = {50,  80,  50,  130};
     threshold_red   = {175, 5,   240, 110};
@@ -147,66 +151,45 @@ cv::Mat SignalDetector::diffimg(cv::Mat after, cv::Mat before) {
     binary_green_after = extract_color(after, threshold_green);
     binary_red_after   = extract_color(after, threshold_red);  
     
+    // diff
     blue_final  = binary_blue_after - binary_blue_before + 255;
     green_final = binary_green_after- binary_green_before + 255;
     red_final   = binary_red_after - binary_red_before + 255;
-    
-    //prepare the output image:
-    //cv::Mat imageReflectionFinal = cv::Mat::zeros( .size(), testMat.type() );
-    // VGA(640x480)の配列を確保　
-    // CV_8UC3は配列の要素の種類　8U：1Byte(8bit)，C3：3ch（つまりカラー画像）
-    //output = cv::Mat::zeros(Size(after.cols, after.rows), CV_8UC3);
 
-    // 統合
+    // merge
     vector<cv::Mat> output;
     cv::Mat dst;
     output.push_back( blue_final );
 	output.push_back( green_final );
 	output.push_back( red_final );
     cv::merge(output, dst);
+    cv::imwrite("fuga.png", dst);
+    */
+    
+    /***********************************************************************
+     * パターン2
+     * reference : https://koshinran.hateblo.jp/entry/2018/03/11/231901
+     **********************************************************************/
+    std::vector<cv::Mat> rgb_after;
+    cv::split(after, rgb_after);
+
+    std::vector<cv::Mat> rgb_before;
+    cv::split(before, rgb_before);
+
+    cv::Mat blue_diff = rgb_after[0] - rgb_before[0] + 255;
+    cv::Mat green_diff = rgb_after[1] - rgb_before[1] + 255;
+    cv::Mat red_diff = rgb_after[2] - rgb_before[2] + 255;    
+    
+    vector<cv::Mat> output;
+    cv::Mat dst;
+    output.push_back( blue_diff );
+	output.push_back( green_diff );
+	output.push_back( red_diff );
+    cv::merge(output, dst);
     cv::imwrite("fuga2.png", dst);
 
     return dst;
-    /*
-    for (int v = 0; v < img.size().height; v++) {
-        for (int u = 0; u < img.size().width; u++) {
-            output.at<Vec3b>(v, u) = Vec3b(50, 100, 150); // B:50 G:100 R:150
-            output.at<Vec3b>(v, u)[0] = blue_final;
-        }
-    }
-    */
-
-    // https://www.atmarkit.co.jp/ait/articles/1608/17/news115.html
-    //output.val[0] = ;
-    
-    /*
-    image.at<cv::Vec3b>[0] //Blue
-    image.at<cv::Vec3b>[1] //Green
-    image.at<cv::Vec3b>[2] //Red
-    */
-
-    //output = np.zeros((after.shape[0],after.shape[1],3));
-
-    /*
-    blue_before  = before[:,:,0];
-    green_before = before[:,:,1];
-    red_before   = before[:,:,2];
-
-    blue_after  = after[:,:,0];
-    green_after = after[:,:,1];
-    red_after   = after[:,:,2];
-
-    blue_final  = blue_after - blue_before + 255;
-    green_final = green_after- green_before + 255;
-    red_final   = red_after - red_before + 255;
-
-    output=np.zeros((after.shape[0],after.shape[1],3));
-    output[:,:,0]=blue_final;
-    output[:,:,1]=green_final;
-    output[:,:,2]=red_final;
-
-    return (output/2.0).astype(np.uint8);
-    */
+    // return (output/2.0).astype(np.uint8);
 }
 
 /*

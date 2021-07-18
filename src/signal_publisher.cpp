@@ -49,46 +49,6 @@ void SignalDetecorNode::callback(const sensor_msgs::Image &data)
 	signal_pub.publish(state);
 }
 
-/*
-struct hsv_threshold
-{
-    unsigned char hue_lower;
-    unsigned char hue_upper;
-    unsigned char saturation;
-    unsigned char value;
-};
-
-cv::Mat extract_color(cv::Mat image, hsv_threshold threshold)
-{
-    cv::Mat gaussian, hsv, channels[3], temp;
-    cv::Mat hue, saturation, value, binary;
-    cv::GaussianBlur(image, gaussian, cv::Size(11,11), 10, 10);
-    cv::cvtColor(image, hsv, CV_BGR2HSV);
-    cv::split(hsv, channels);
-
-    if( threshold.hue_lower <= threshold.hue_upper)
-    {
-        cv::threshold(channels[0], temp, threshold.hue_lower,  180, CV_THRESH_TOZERO);
-        cv::threshold(temp, hue, threshold.hue_upper, 180, CV_THRESH_TOZERO_INV);
-    }
-    else
-    {
-        cv::Mat temp_1, temp_2;
-        cv::threshold(channels[0], temp_1, threshold.hue_upper, 180, CV_THRESH_TOZERO_INV);
-        cv::threshold(channels[0], temp_2, threshold.hue_lower, 180, CV_THRESH_TOZERO);
-        cv::bitwise_or(temp_1, temp_2, hue);
-    }
-
-    cv::threshold(channels[1], saturation, threshold.saturation, 255, CV_THRESH_BINARY);
-    cv::threshold(channels[2], value     , threshold.value,      255, CV_THRESH_BINARY);
-    cv::bitwise_and(hue,  saturation, temp);
-    cv::bitwise_and(temp, value,      binary);
-    cv::dilate(binary, temp, cv::Mat(), cv::Point(-1, -1), 1);
-    cv::erode(temp, binary, cv::Mat(), cv::Point(-1, -1), 1);
-
-    return binary;
-}
-*/
 int main(int argc, char**argv)
 {
 	ros::init(argc, argv, "signal_publisher");
@@ -127,6 +87,25 @@ int main(int argc, char**argv)
     cv::Mat blue_final  = binary_blue_after - binary_blue_before + 255;
     cv::Mat green_final = binary_green_after- binary_green_before + 255;
     cv::Mat red_final   = binary_red_after - binary_red_before + 255;
+    
+    // 別のパターン
+    std::vector<cv::Mat> after;
+    cv::split(image, after);
+
+    std::vector<cv::Mat> before;
+    cv::split(image, before);
+
+    cv::Mat blue_diff = after[0] - before[0] + 255;
+    cv::Mat green_diff = after[1] - before[1] + 255;
+    cv::Mat red_diff = after[2] - before[2] + 255;    
+    
+    vector<cv::Mat> output2;
+    cv::Mat test2;
+    output2.push_back( blue_diff );
+	output2.push_back( green_diff );
+	output2.push_back( red_diff );
+    cv::merge(output2, test2);
+    cv::imwrite("fuga2.png", test2);
 
     //cout << binary_blue_before << endl;
     //cout << binary_green_before << endl;
