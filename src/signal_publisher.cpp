@@ -47,7 +47,7 @@ void SignalDetecorNode::callback(const sensor_msgs::Image &data)
 	// cv_image->imageがcv::Matフォーマット
 	state.data = check_signal_state(cv_image->image);
 	signal_pub.publish(state);
-    ROS_INFO("%d is published", state);
+    //ROS_INFO("%d is published", state);
 }
 
 int main(int argc, char**argv)

@@ -47,11 +47,16 @@ include_directories(
 #add_dependencies(signal_publisher_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #target_link_libraries(signal_publisher_node ${catkin_LIBRARIES})
 
-
 #add_executable(traffic_signal_detection src/test.cpp)
 add_executable(signal_publisher src/signal_publisher.cpp)
 #add_executable(signal_publisher signal_publisher.cpp)
 target_link_libraries(signal_publisher
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
+add_executable(signal_subscriber src/signal_subscriber.cpp)
+target_link_libraries(signal_subscriber
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )

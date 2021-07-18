@@ -96,7 +96,7 @@ SignalDetector::SignalDetector()
     temp1 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/red2black.png");
     temp2 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/black2green.png");
     temp3 = cv::imread(homepath + "/catkin_ws/src/traffic_signal_detection/templates/green2red.png");
-    
+
     if (temp0.empty() && temp1.empty() && temp2.empty() && temp3.empty()) {
         ROS_ERROR("map: unable to open the map");
     }
@@ -191,29 +191,6 @@ cv::Mat SignalDetector::diffimg(cv::Mat after, cv::Mat before) {
     return dst;
     // return (output/2.0).astype(np.uint8);
 }
-
-/*
-def diffimg(self, after, before):
-
-    blue_before  = before[:,:,0]
-    green_before = before[:,:,1]
-    red_before   = before[:,:,2]
-
-    blue_after  = after[:,:,0]
-    green_after = after[:,:,1]
-    red_after   = after[:,:,2]
-
-    blue_final  = blue_after.astype(np.int32) - blue_before.astype(np.int32) + 255
-    green_final = green_after.astype(np.int32)- green_before.astype(np.int32) + 255
-    red_final   = red_after.astype(np.int32) - red_before.astype(np.int32) + 255
-
-    output=np.zeros((after.shape[0],after.shape[1],3))
-    output[:,:,0]=blue_final
-    output[:,:,1]=green_final
-    output[:,:,2]=red_final
-
-    return (output/2.0).astype(np.uint8)
-*/
 
 int SignalDetector::check_signal_state(cv::Mat frame)
 {
