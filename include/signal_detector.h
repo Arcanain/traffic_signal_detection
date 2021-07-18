@@ -186,7 +186,7 @@ cv::Mat SignalDetector::diffimg(cv::Mat after, cv::Mat before) {
 	output.push_back( green_diff );
 	output.push_back( red_diff );
     cv::merge(output, dst);
-    cv::imwrite("fuga2.png", dst);
+    //cv::imwrite("fuga2.png", dst);
 
     return dst;
     // return (output/2.0).astype(np.uint8);
